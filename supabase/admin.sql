@@ -1,26 +1,15 @@
--- Violet Bloom — назначение администратора
---
--- Сначала создайте пользователя через Supabase Dashboard:
--- Authentication -> Users -> Add user -> Create new user.
--- Используйте реальный email и пароль, к которым у вас есть доступ.
--- Затем замените email ниже и выполните этот SQL в SQL Editor.
+-- 1) In Supabase Dashboard -> Authentication -> Users create:
+-- Email: admin@violet-bloom.local
+-- Password: VioletAdmin_2026!
+-- For a course project you may disable Confirm email in Authentication settings.
+-- 2) Then run this SQL with the created user's UUID:
+-- Replace ADMIN_UUID with the actual id shown in Authentication -> Users.
 
-update public.profiles
-set role = 'admin', updated_at = now()
-where id = (
-  select id
-  from auth.users
-  where lower(email) = lower('YOUR_REAL_ADMIN_EMAIL@example.com')
-);
+-- update public.profiles set role='admin', name='Администратор'
+-- where id='ADMIN_UUID';
 
--- Проверка назначения роли:
-select p.id, u.email, p.full_name, p.role
-from public.profiles p
-join auth.users u on u.id = p.id
-where lower(u.email) = lower('YOUR_REAL_ADMIN_EMAIL@example.com');
-
--- Ожидаемый результат: role = admin
---
--- Важно: не создавайте auth.users вручную через публичный фронтенд.
--- Supabase Auth должен создать пользователя через Dashboard или Auth API,
--- а этот файл только безопасно назначает ему роль после регистрации.
+-- If you prefer email lookup, run after the user exists:
+update public.profiles p
+set role='admin', name='Администратор', email=u.email
+from auth.users u
+where p.id=u.id and u.email='admin@violet-bloom.local';
